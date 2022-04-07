@@ -349,26 +349,13 @@ fn test_transaction_fees() {
 
 #[test]
 fn test_get_all_ciphertexts() {
-    let rng = &mut thread_rng();
-    let terminator = AtomicBool::new(false);
     // Initialize a new ledger.
     let ledger = create_new_ledger::<Testnet2, RocksDB>();
 
-    // Initialize a new account.
-    let account = Account::<Testnet2>::new(&mut thread_rng());
-    let address = account.address();
-
-    // Mine the next block.
-    let (block, _) = ledger
-        .mine_next_block(address, true, &[], &terminator, rng)
-        .expect("Failed to mine");
-    ledger.add_next_block(&block).expect("Failed to add next block to ledger");
-
     let expected_ciphertexts_set = ledger
-        .get_blocks(0, ledger.latest_block_height())
+        .get_block(0)
         .unwrap()
-        .iter()
-        .flat_map(|block| block.commitments())
+        .commitments()
         .map(|commitment| ledger.get_ciphertext(commitment).unwrap())
         .collect::<HashSet<_>>();
 
