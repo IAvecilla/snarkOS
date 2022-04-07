@@ -32,14 +32,6 @@ fn create_new_ledger<N: Network, S: Storage>() -> LedgerState<N> {
     LedgerState::open_writer_with_increment::<S, _>(temp_dir(), 1).expect("Failed to initialize ledger")
 }
 
-fn to_hash_set_test<N: Network>(ciphertexts: Vec<N::RecordCiphertext>) -> HashSet<N::RecordCiphertext> {
-    let mut set = HashSet::new();
-    for ciphertext in ciphertexts {
-        set.insert(ciphertext);
-    }
-    set
-}
-
 #[test]
 fn test_genesis() {
     // Initialize a new ledger.
@@ -372,16 +364,15 @@ fn test_get_all_ciphertexts() {
         .expect("Failed to mine");
     ledger.add_next_block(&block).expect("Failed to add next block to ledger");
 
-    let expected_ciphertexts_set = to_hash_set_test::<Testnet2>(
-        ledger
-            .get_blocks(0, ledger.latest_block_height())
-            .unwrap()
-            .iter()
-            .flat_map(|block| block.commitments())
-            .map(|commitment| ledger.get_ciphertext(commitment).unwrap())
-            .collect::<Vec<_>>(),
-    );
-    let ciphertexts_set = to_hash_set_test::<Testnet2>(ledger.get_ciphertexts().unwrap().collect());
+    let expected_ciphertexts_set = ledger
+        .get_blocks(0, ledger.latest_block_height())
+        .unwrap()
+        .iter()
+        .flat_map(|block| block.commitments())
+        .map(|commitment| ledger.get_ciphertext(commitment).unwrap())
+        .collect::<HashSet<_>>();
+
+    let ciphertexts_set = ledger.get_ciphertexts().unwrap().collect();
 
     assert_eq!(expected_ciphertexts_set, ciphertexts_set);
 }
