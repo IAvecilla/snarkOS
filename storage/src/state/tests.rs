@@ -372,7 +372,10 @@ fn test_get_all_ciphertexts() {
         .map(|commitment| ledger.get_ciphertext(commitment).unwrap())
         .collect::<HashSet<_>>();
 
-    let ciphertexts_set = ledger.get_ciphertexts().unwrap().collect();
+    let ciphertexts_set = ledger
+        .get_ciphertexts()
+        .filter_map(|ciphertext_result| ciphertext_result.ok())
+        .collect();
 
     assert_eq!(expected_ciphertexts_set, ciphertexts_set);
 }
