@@ -284,8 +284,12 @@ impl<N: Network, A: StorageAccess> LedgerState<N, A> {
     }
 
     /// Returns all the records ciphertexts in the ledger.
-    pub fn get_ciphertexts(&self) -> impl Iterator<Item = N::RecordCiphertext> + '_ {
-        self.blocks.get_ciphertexts()
+    // pub fn get_ciphertexts(&self) -> impl Iterator<Item = N::RecordCiphertext> + '_ {
+    //     self.blocks.get_ciphertexts()
+    // }
+
+    fn get_transitions(&self) -> impl Iterator<Item = Transition<N>> + '_ {
+        self.blocks.get_transitions()
     }
 
     /// Returns the block locators of the current ledger, from the given block height.
@@ -1312,8 +1316,12 @@ impl<N: Network, A: StorageAccess> BlockState<N, A> {
     }
 
     /// Returns all the records ciphertexts in the ledger.
-    fn get_ciphertexts(&self) -> impl Iterator<Item = N::RecordCiphertext> + '_ {
-        self.transactions.get_ciphertexts()
+    // fn get_ciphertexts(&self) -> impl Iterator<Item = N::RecordCiphertext> + '_ {
+    //     self.transactions.get_ciphertexts()
+    // }
+
+    fn get_transitions(&self) -> impl Iterator<Item = Transition<N>> + '_ {
+        self.transactions.get_transitions()
     }
 
     /// Returns the transition for a given transition ID.
@@ -1594,10 +1602,19 @@ impl<N: Network, A: StorageAccess> TransactionState<N, A> {
     }
 
     /// Returns all the records ciphertexts in the ledger.
-    fn get_ciphertexts(&self) -> impl Iterator<Item = N::RecordCiphertext> + '_ {
-        self.transitions
-            .values()
-            .flat_map(|(_, _, transition)| transition.ciphertexts().cloned().collect::<Vec<N::RecordCiphertext>>())
+    // fn get_ciphertexts<'a>(&self) -> impl Iterator<Item = Cow<'a, impl Iterator<Item = &N::RecordCiphertext>>> + 'a {
+    //     let ret = self.transitions
+    //         .values()
+    //         .map(|(_, _, transition)| {
+    //             let aux = transition.ciphertexts();
+    //             Cow::Borrowed(&aux)
+    //         });
+    //     ret
+    // }
+
+    /// Returns all the transitions in the ledger.
+    fn get_transitions(&self) -> impl Iterator<Item = Transition<N>> + '_ {
+        self.transitions.values().map(|(_, _, transition)| transition)
     }
 
     /// Returns the transition for a given transition ID.

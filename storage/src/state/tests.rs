@@ -287,19 +287,19 @@ fn test_transaction_fees() {
     assert_eq!(output_record.value(), amount);
 }
 
-#[test]
-fn test_get_all_ciphertexts() {
-    // Initialize a new ledger.
-    let ledger = create_new_ledger::<CurrentNetwork, RocksDB>();
+// #[test]
+// fn test_get_all_ciphertexts() {
+//     // Initialize a new ledger.
+//     let ledger = create_new_ledger::<CurrentNetwork, RocksDB>();
 
-    let expected_ciphertexts: Vec<_> = ledger
-        .get_block(0)
-        .unwrap()
-        .commitments()
-        .map(|commitment| ledger.get_ciphertext(commitment).unwrap())
-        .collect();
+//     let expected_ciphertexts: Vec<_> = ledger
+//         .get_block(0)
+//         .unwrap()
+//         .commitments()
+//         .map(|commitment| ledger.get_ciphertext(commitment).unwrap())
+//         .collect();
 
-    let ciphertexts: Vec<_> = ledger.get_ciphertexts().collect();
+//     let ciphertexts: Vec<_> = ledger.get_ciphertexts().collect();
 
-    assert_eq!(expected_ciphertexts, ciphertexts);
-}
+//     assert_eq!(expected_ciphertexts, ciphertexts);
+// }
