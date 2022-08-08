@@ -288,7 +288,7 @@ impl<N: Network, A: StorageAccess> LedgerState<N, A> {
     //     self.blocks.get_ciphertexts()
     // }
 
-    fn get_transitions(&self) -> impl Iterator<Item = Transition<N>> + '_ {
+    pub fn get_transitions(&self) -> impl Iterator<Item = Transition<N>> + '_ {
         self.blocks.get_transitions()
     }
 
